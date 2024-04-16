@@ -1,0 +1,3 @@
+[submodule "src/ofm"]
+	path = src/ofm
+	url = git@github.com:walliv/ofm.git
