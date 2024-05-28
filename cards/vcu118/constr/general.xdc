@@ -15,21 +15,18 @@ set_property CONFIG_VOLTAGE 1.8                         [current_design]
 
 # Reference clock
 # 300 MHz clock
-set_property PACKAGE_PIN G31 [get_ports {REFCLK_P}]
-set_property PACKAGE_PIN F31 [get_ports {REFCLK_N}]
-
-create_clock -period 3.333 -name refclk [get_ports {REFCLK_P}]
+# set_property PACKAGE_PIN G31              [get_ports {REFCLK_P}]
+# set_property PACKAGE_PIN F31              [get_ports {REFCLK_N}]
+# create_clock -period 3.333 -name refclk   [get_ports {REFCLK_P}]
+# set_property IOSTANDARD DIFF_SSTL12       [get_ports {REFCLK_P}]
+# set_property IOSTANDARD DIFF_SSTL12       [get_ports {REFCLK_N}]
 
 # 125 MHz clock
-# set_property PACKAGE_PIN AY24 [get_ports {REFCLK_P}]
-# set_property PACKAGE_PIN AY23 [get_ports {REFCLK_N}]
-
-# create_clock -period 8 -name refclk [get_ports {REFCLK_P}]
-
-# Only for 300
-set_property IOSTANDARD DIFF_SSTL12 [get_ports {REFCLK_P}]
-set_property IOSTANDARD DIFF_SSTL12 [get_ports {REFCLK_N}]
-
+set_property PACKAGE_PIN AY24       [get_ports {REFCLK_P}]
+set_property PACKAGE_PIN AY23       [get_ports {REFCLK_N}]
+create_clock -period 8 -name refclk [get_ports {REFCLK_P}]
+set_property IOSTANDARD LVDS        [get_ports {REFCLK_P}]
+set_property IOSTANDARD LVDS        [get_ports {REFCLK_N}]
 
 # Status LEDs
 set_property PACKAGE_PIN AT32 [get_ports {STATUS_LEDS[0]}]
