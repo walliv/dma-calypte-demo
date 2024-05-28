@@ -22,6 +22,8 @@ features:
 |:-----:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | EMPTY | No functionality, output signals are set to default values. This is used mainly for a testing of the communication infrastructure.                                                                                    |
 | TEST  | A simple architecture for testing the platform containing the insertion of counter values to the passing data from/to DMA. There is also an HBM IP with memory tester that checks the functionality of the HBM stack. |
+| FULL  | Contains MANYCORE_SYSTEM from the `BarrelRISCV` repository and provides an adaptation interface to the communication infrastructure.                                                                                  |
+|       |                                                                                                                                                                                                                       |
 
 Whenever you need to use multiple clocks, a clock-domain crossing needs to be
 added because the MFB interface is clocked to the same clock as the DMA engine

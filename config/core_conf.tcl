@@ -8,8 +8,8 @@
 # ------------------------------------------------------------------------------
 # Application core parameters:
 # ------------------------------------------------------------------------------
-# Valid options are: TEST, EMPTY
-set APP_CORE_ARCH "TEST"
+# Valid options are: TEST, FULL, EMPTY
+set APP_CORE_ARCH "FULL"
 
 # ------------------------------------------------------------------------------
 # PCIe parameters (not all combinations work):
