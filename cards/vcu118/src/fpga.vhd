@@ -38,6 +38,88 @@ port (
 end entity;
 
 architecture FULL of FPGA is
+    -- =============================================================================================
+    -- MMCM settings:
+    -- =============================================================================================
+    -- Output frequency | D     | M     | O     | VCO_freq  |
+    -- -----------------|-------|-------|-------|-----------|
+    -- 300              | 5     | 63.0  | 5.25  | 1575      |
+    -- 350              | 5     | 63.0  | 4.5   | 1575      |
+    -- 400              | 5     | 64.0  | 4.0   | 1600      |
+    -- 450              | 5     | 63.0  | 3.5   | 1575      |
+    -- 500              | 5     | 62.5  | 3.125 | 1562.5    |
+
+    constant MMCM_OUT_FREQ : natural := 350;
+
+    function DeriveMasterDiv ( --D
+        freq : natural)
+        return natural is
+    begin
+        case freq is
+            when 100 => return 5;
+            when 150 => return 5;
+            when 200 => return 5;
+            when 250 => return 5;
+            when 300 => return 5;
+            when 350 => return 5;
+            when 360 => return 5;
+            when 370 => return 5;
+            when 380 => return 5;
+            when 390 => return 5;
+            when 400 => return 5;
+            when 420 => return 5;
+            when 450 => return 5;
+            when 500 => return 5;
+            when others => return 0;
+        end case;
+    end function;
+
+    function DeriveMasterMult ( --M
+        freq : natural)
+        return real is
+    begin
+        case freq is
+            when 100 => return 64.0;
+            when 150 => return 63.75;
+            when 200 => return 64.0;
+            when 250 => return 63.75;
+            when 300 => return 63.0;
+            when 350 => return 63.0;
+            when 360 => return 63.0;
+            when 370 => return 55.5;
+            when 380 => return 57.0;
+            when 390 => return 58.5;
+            when 400 => return 64.0;
+            when 420 => return 63.0;
+            when 450 => return 63.0;
+            when 500 => return 62.5;
+            when others => return 0.0;
+        end case;
+    end function;
+
+    function DeriveOutDiv ( --O
+        freq : natural)
+        return real is
+    begin
+        case freq is
+            when 100 => return 16.0;
+            when 150 => return 10.625;
+            when 200 => return 8.0;
+            when 250 => return 6.375;
+            when 300 => return 5.25;
+            when 350 => return 4.5;
+            when 360 => return 4.375;
+            when 370 => return 3.75;
+            when 380 => return 3.75;
+            when 390 => return 3.75;
+            when 400 => return 4.0;
+            when 420 => return 3.75;
+            when 450 => return 3.5;
+            when 500 => return 3.125;
+            when others => return 0.0;
+        end case;
+    end function;
+    -- =============================================================================================
 
     constant MISC_IN_WIDTH       : integer := 64;
     constant MISC_OUT_WIDTH      : integer := 64+1+1+1;
@@ -92,11 +174,11 @@ begin
         USE_PCIE_CLK            => FALSE,
 
         CLK_COUNT               => 2,
-        SYSCLK_PERIOD           => 3.333,
-        PLL_MULT_F              => 4.0,
-        PLL_MASTER_DIV          => 1,
-        PLL_OUT0_DIV_F          => 3.0,
-        PLL_OUT_DIV_VECT        => (others => 12),
+        SYSCLK_PERIOD           => 8.0,
+        PLL_MULT_F              => DeriveMasterMult(MMCM_OUT_FREQ),
+        PLL_MASTER_DIV          => DeriveMasterDiv(MMCM_OUT_FREQ),
+        PLL_OUT0_DIV_F          => DeriveOutDiv(MMCM_OUT_FREQ),
+        PLL_OUT_DIV_VECT        => (others => 15),
 
         PCIE_CONS               => 1,
         PCIE_LANES              => PCIE_LANES,
