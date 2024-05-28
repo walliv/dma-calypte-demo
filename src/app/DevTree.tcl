@@ -8,10 +8,19 @@
 proc dts_application {base generics} {
     array set GENERICS $generics
 
+    set hbm_channels  $GENERICS(HBM_CHANNELS)
     set app_core_arch $GENERICS(APP_CORE_ARCH)
 
     set ret ""
     append ret "application {"
+
+    if {$app_core_arch == "TEST"} {
+
+        if {$hbm_channels > 0} {
+            set hbm_tester_base $base
+            append ret [dts_hbm_tester "hbm_tester" $hbm_tester_base]
+        }
+    }
 
     append ret "};"
     return $ret
