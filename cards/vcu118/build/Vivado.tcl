@@ -34,19 +34,25 @@ set SYNTH_FLAGS(BOARD)     $CARD_NAME
 # Non-project mode: Specific name of a directive OR a string of switches
 # ------------------------------------------------------------------------------
 # Synthesis directive (synth_design command)
-# set SYNTH_FLAGS(SYNTH_DIRECTIVE) ""
+set SYNTH_FLAGS(SYNTH_DIRECTIVE) "AreaOptimized_high"
 # Post-synthesis optimization (opt_design command)
-set SYNTH_FLAGS(SOPT_DIRECTIVE)  "Explore"
+set SYNTH_FLAGS(SOPT_DIRECTIVE)  "ExploreWithRemap"
 # Placer (place_design command)
-set SYNTH_FLAGS(PLACE_DIRECTIVE) "Explore"
+set SYNTH_FLAGS(PLACE_DIRECTIVE) "ExtraPostPlacementOpt"
 # Post-place power optimization (power_opt_design command) only enable or disable, i.e. no directive
 # set SYNTH_FLAGS(PPLACE_POWER_OPT_DIRECTIVE) false
 # Post-place physical optimization (phys_opt_design command)
 # set SYNTH_FLAGS(PPLACE_PHYS_OPT_DIRECTIVE) ""
 # Router (route_design command)
-set SYNTH_FLAGS(ROUTE_DIRECTIVE) "Explore"
+set SYNTH_FLAGS(ROUTE_DIRECTIVE) "-directive AggressiveExplore -tns_cleanup"
 # Post-route physical optimization (phys_opt_design command)
 # set SYNTH_FLAGS(PROUTE_PHYS_OPT_DIRECTIVE)  ""
+
+# ------------------------------------------------------------------------------
+# Other build directives
+# ------------------------------------------------------------------------------
+set SYNTH_FLAGS(FLATTEN_HIERARCHY) "rebuilt"
+set SYNTH_FLAGS(RETIMING) true
 
 # ------------------------------------------------------------------------------
 # Constant propagation to submodules
