@@ -1,0 +1,57 @@
+# Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+# SPDX-License-Identifier: CC-BY-4.0
+
+#+title: Makefile for synthesis
+#+author: Vladislav Valek <vladislawalek@gmail.com>
+
+Upon creating a new component, it is recommended to supply it with synthesis
+=Makefile= located in the =synth= subdirectory beside the HDL source file.
+
+* Header
+The same as in other source files, the =Makefile= contains the header in the
+beginning that specifies, above all, the license and the list of authors with
+their emails.
+
+#+BEGIN_SRC makefile :tangle ../template/synth/Makefile
+
+# Makefile: for synthesizing the compoments
+# Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+# Author(s): Vladislav Valek <vladislavwalek@gmail.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#+END_SRC
+
+* Synthesis tool setting
+
+The description of these parameters can be found in the [[https://cesnet.github.io/ofm/build/readme.html#component-synthesis][Component synthesis]]
+section of the Build system documentation in the OFM repository.
+
+#+BEGIN_SRC makefile :tangle ../template/synth/Makefile
+
+TOP_LEVEL_ENT=UPDOWN_CNTR
+TOP_LEVEL_PATH=..
+
+SYNTH=vivado
+
+CLK_PORTS=CLK
+CLK_PERIOD=4.000
+
+.PHONY: all
+all: comp
+
+#+END_SRC
+
+* Including the main Makefile
+:PROPERTIES:
+:ID:       20d09eb8-0029-4927-aafc-63931c0b6608
+:END:
+After initial setting has been done, the central =Makefile= is included. This is
+located in the OFM repository (currently [[https://github.com/walliv/ofm/blob/valek-feat-dma_one_chan/build/Makefile][/src/ofm/build/Makefile]]) and its path
+needs to be checked upon creating a new component.
+
+#+BEGIN_SRC makefile :tangle ../template/synth/Makefile
+
+include ../../../../src/ofm/build/Makefile
+
+#+END_SRC

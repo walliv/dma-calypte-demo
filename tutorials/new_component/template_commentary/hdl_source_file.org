@@ -1,0 +1,180 @@
+# Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+# SPDX-License-Identifier: CC-BY-4.0
+
+#+TITLE: Creating a HDL source file
+#+AUTHOR: Vladislav Válek
+
+* Header
+The file begins with a header that is recommended to be included in every source
+file. The header begins with the name of the source file (in this case
+=updown_cntr.vhd=) and a short description of the file. This is followed by the
+copyright notice of which the form is dependent on the license specified by the
+=SPDX-License-Identifier:= line. It is highly recommended to have this identifier
+in every source file (with its copyright notice and eventually other required
+parts of the license). It is recommended to list authors of the file with their
+contact email.
+
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+-- updown_cntr.vhd: An automatically reversible binary counter
+-- Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+-- Author(s): Vladislav Valek <vladislawalek@gmail.com>
+--
+-- SPDX-License-Identifier: CERN-OHL-P-2.0
+#+END_SRC
+
+* Used libraries
+All of the used files are required to use the standard IEEE packages
+=std_logic_1164= and =numeric_std=. Do not use the deprecated packages
+=std_logic_arith=, =std_logic_unsigned= or =std_logic_signed=.
+
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+#+END_SRC
+
+Optionally, an extension packages can be added with additional types and
+mathematical functions. These are located in the [[https://github.com/walliv/ofm/tree/valek-feat-dma_one_chan/comp/base/pkg][/src/ofm/comp/base/pkg/]]
+directory.
+- The =math_pack= provides mathematical functions, most importantly ~log2~ function
+  used in determine the bit length of ports/signals.
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+use work.math_pack.all;
+#+END_SRC
+
+- The =type_pack= provides multidimensional derivatives of the =std_logic_vector=,
+  =unsigned= and =integer= datatypes. The =std_logic_vector= based types are provided
+  with manipulation functions allowing to /serialize/ or /deserialize/ (sometimes
+  called /pack/ and /unpack/) these types.
+#+BEGIN_SRC vhdl
+use work.type_pack.all;
+#+END_SRC
+
+
+* Entity declaration
+A detailed description of the behavior of the entity should be put above the
+entity declaration after including the packages. It is usually provided as one
+multi-line comment.
+
+The name of an entity, its ports and its generics follow the naming convention
+of being written in uppercase to be distinguishable from the internal signals of
+the architecture. It is strongly advised to use only =std_logic= and
+=std_logic_vector= (and its multidimensional variants) in the port declaration
+section.
+
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+
+-- This component provides a counter with configurable length that counts up upon restart and
+-- automatically reverses its counting direction (froom UP to DOWN and vice versa) upon reaching its
+-- maximum value (when counting upwards) or minimum value (when counting down).
+entity UPDOWN_CNTR is
+    generic (
+        -- Bit length of a counter
+        LENGTH  : natural := 32);
+    port (
+        CLK             : in  std_logic;
+        RESET           : in  std_logic;
+        -- Initial value of the counter after reset
+        CNTR_INIT       : in  std_logic_vector(LENGTH -1 downto 0);
+        -- Output value of a counter
+        CNTR_OUT        : out std_logic_vector(LENGTH -1 downto 0);
+        -- Set to 1 if CNTR_OUT reaches the minimum value
+        MIN_VAL_REACHED : out std_logic;
+        -- Set to 1 if CNTR_OUT reaches the maximum value
+        MAX_VAL_REACHED : out std_logic);
+end entity;
+
+#+END_SRC
+
+* Architecture declaration
+=FULL= is the default name of an architecture but can be chosed according to the
+user's needs. Notice the uppercase naming convention in the name of the
+architecture as well as the constant parameters (specific constants either
+separate or items in ~enum~  types).
+
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+
+architecture FULL of UPDOWN_CNTR is
+    constant CNTR_MAX_VAL : unsigned (LENGTH -1 downto 0) := (others => '1');
+
+#+END_SRC
+
+The signals as well as internal datatypes can be different than =std_logic= or
+=std_logic_vector= and are essentially written in lowercase.
+
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+
+    type cntr_state_t is (S_CNT_UP, S_CNT_DOWN);
+    signal cntr_state_pst : cntr_state_t := S_CNT_UP;
+    signal cntr_state_nst : cntr_state_t := S_CNT_UP;
+
+    signal cntr_val_pst : unsigned(LENGTH -1 downto 0);
+    signal cntr_val_nst : unsigned(LENGTH -1 downto 0);
+
+    signal minval_reached_n_int : std_logic;
+begin
+
+#+END_SRC
+
+Each process should have a name in order to be easily identified in the
+simulation tool. Anyway, this is a simple state machine of a counter written in
+2 processes.
+
+#+BEGIN_SRC vhdl :tangle ../template/updown_cntr.vhd
+
+cntr_reg_p : process (CLK) is
+begin
+    if (rising_edge(CLK)) then
+        if (RESET = '1') then
+            cntr_state_pst <= S_CNT_UP;
+            cntr_val_pst   <= unsigned(CNTR_INIT);
+        else
+            cntr_state_pst <= cntr_state_nst;
+            cntr_val_pst   <= cntr_val_nst;
+        end if;
+    end if;
+end process;
+
+cntr_nst_logic_p : process (all) is
+begin
+    cntr_state_nst <= cntr_state_pst;
+    cntr_val_nst   <= cntr_val_pst;
+
+    case cntr_state_pst is
+        when S_CNT_UP =>
+            cntr_val_nst <= cntr_val_pst + 1;
+
+            if (cntr_val_pst = (CNTR_MAX_VAL -1)) then
+                cntr_state_nst <= S_CNT_DOWN;
+            end if;
+
+        when S_CNT_DOWN =>
+            cntr_val_nst <= cntr_val_pst - 1;
+
+            if (cntr_val_pst = to_unsigned(1, LENGTH -1)) then
+                cntr_state_nst <= S_CNT_UP;
+            end if;
+    end case;
+end process;
+
+maxval_and_i : entity work.GEN_AND
+    generic map (
+        AND_WIDTH => LENGTH)
+    port map (
+        DI => std_logic_vector(cntr_val_pst),
+        DO => MAX_VAL_REACHED);
+
+minval_or_i : entity work.GEN_OR
+    generic map (
+        OR_WIDTH => LENGTH)
+    port map (
+        DI => std_logic_vector(cntr_val_pst),
+        DO => minval_reached_n_int);
+
+MIN_VAL_REACHED <= not minval_reached_n_int;
+CNTR_OUT        <= std_logic_vector(cntr_val_pst);
+
+end architecture;
+#+END_SRC

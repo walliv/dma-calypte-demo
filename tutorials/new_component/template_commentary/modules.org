@@ -1,0 +1,119 @@
+# Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+# SPDX-License-Identifier: CC-BY-4.0
+
+#+title: Including subcomponents to your component
+#+author: Vladislav Valek <vladislawalek@gmail.com>
+
+Every component in the FPGA design is linked within a hierarchy of components
+that is defined by =Modules.tcl= file located by source file of each component(the
+location is usually so but it is not a requirement). This file lists all
+subcomponents that are instantiated within the current architecture. There is a
+distinction between external and internal subcomponents:
+- /External subcomponents/ are universal subcomponents that can be used not only
+  within the local architecture but in many others (f.e. generic gates,
+  memory blocks or bus slaves). These are part of the ~COMPONENTS~ list within the
+  =Modules.tcl= file.
+- /Internal subcomponents/ are subcomponents that are specific to the current
+  architecture and are (mostly) unusable within other architectures (f.e. highly
+  optimized multiplexors or specific bus units that are made for one specific
+  FPGA platform). The internal components are part of the ~MOD~ list inside the
+  =Modules.tcl= the source file of the main component is an internal subcomponent.
+
+* Header
+As in the case of VHDL source files, this script also contains a header that
+defines the name of the file, as well as the license identifier and contributing
+authors.
+
+#+BEGIN_SRC tcl :tangle ../template/Modules.tcl
+
+# Modules.tcl: modules of the UPDOWN_CNTR
+# Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+# Author(s): Vladislav Valek <vladislawalek@gmail.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#+END_SRC
+
+* Paths
+To maintain readability of a code, it is recommented to declare all paths to the
+subcomponents in separate variables. In order to simplify the path declarations,
+global parameters are available to reference different parts of the repository.
+These parameters are described in the section =Description of a build of a FPGA firmware=
+within the main [[file:../../../README.md][README file]]. Another parameter is added to those,
+namely =ENTITY_BASE=, that contains the path to the directory where the current
+=Modules.tcl= is located.
+
+#+BEGIN_SRC tcl :tangle ../template/Modules.tcl
+
+set GEN_AND_BASE "$OFM_PATH/comp/base/logic/and"
+set GEN_MOD_BASE "$OFM_PATH/comp/base/logic/or"
+
+#+END_SRC
+
+* External subcomponents
+External subcomponents are added to the ~COMPONENTS~ list. Each element in this
+list is another list that containg a tuple of 3 elements:
+1. Name of the entity
+2. Path to the =Modules.tcl= file of the subcomponent. Only directory needs to be
+   specified.
+3. Value passed down the hierarchy. This is passed using a s.c. =ARCHGRP= that can
+   be also initialized as an associative array to pass more parameters. In this
+   case, only the string ~"FULL"~ is passed to both the ~GEN_AND~ and the ~GEN_OR~
+   components.
+
+#+BEGIN_SRC tcl :tangle ../template/Modules.tcl
+
+lappend COMPONENTS [list "GEN_AND" $GEN_AND_BASE "FULL" ]
+lappend COMPONENTS [list "GEN_OR"  $GEN_MOD_BASE "FULL" ]
+
+#+END_SRC
+
+* Internal subcomponents
+Adding the internal subcomponents is done by only adding the path to the HDL source
+file to the ~MOD~ list.
+
+#+BEGIN_SRC tcl :tangle ../template/Modules.tcl
+
+lappend MOD "$ENTITY_BASE/updown_cntr.vhd"
+
+#+END_SRC
+
+If multiple internal subcomponents are added, they need to be ordered from the
+lowest in the hierarchy to the highest with lowest being on the top.
+
+#+BEGIN_SRC tcl
+
+# lower component in a hierarchy would be added on this line
+# lappend MOD "$ENTITY_BASE/.vhd"
+lappend MOD "$ENTITY_BASE/updown_cntr.vhd"
+# higher component in a hierarchy would be added on this line
+# lappend MOD "$ENTITY_BASE/higher_hierarchy_comp.vhd"
+
+#+END_SRC
+
+* Optional statements
+Additional files can be added to the specific components that are not parts of
+the working example presented here.
+
+** Including packages
+If a user defines its own packages, they need to be added to the ~PACKAGES~ list
+in the following manner. This example includes the mentioned =math_pack= and
+=type_pack= extension packages.
+
+#+BEGIN_SRC tcl :tangle ../template/Modules.tcl
+
+lappend PACKAGES "$OFM_PATH/comp/base/pkg/math_pack.vhd"
+# lappend PACKAGES "$OFM_PATH/comp/base/pkg/type_pack.vhd"
+
+#+END_SRC
+
+** Including constrains
+Some components (like the ones containing asynchronous crossings, false paths,
+etc.) need to supply they own constrains in order to be correctly synthesized.
+This can be done using the following construct.
+
+#+BEGIN_SRC tcl
+
+lappend SRCS(CONSTR_VIVADO) "$ENTITY_BASE/my_constr.xdc"
+
+#+END_SRC
