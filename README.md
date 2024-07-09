@@ -88,6 +88,7 @@ to have a complete stack:
 ```bash
 git clone git@github.com:walliv/dma-calypte-demo.git 
 cd dma-calypte-demo 
+git switch valek-feat-app_manycore_system
 git submodule update --init src/ofm
 git submodule update --init src/app/BarrelRISCV
 ```
