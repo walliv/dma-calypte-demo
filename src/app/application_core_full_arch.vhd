@@ -16,6 +16,29 @@ use unisim.vcomponents.BUFG;
 
 architecture FULL of APPLICATION_CORE is
 
+    component RISCV_manycore_wrapper is
+        generic (
+            MI_WIDTH : natural := 32;
+
+            MFB_REGIONS     : natural := 1;
+            MFB_REGION_SIZE : natural := 4;
+            MFB_BLOCK_SIZE  : natural := 1;
+            MFB_ITEM_WIDTH  : natural := 1;
+
+            USR_PKT_SIZE_MAX : natural := 2**11);
+        port (
+            clk   : in std_logic;
+            reset : in std_logic;
+
+            channel : out std_logic_vector(3 downto 0);
+
+            DMA_RX_MFB_DATA    : out std_logic_vector(MFB_REGIONS*MFB_REGION_SIZE*MFB_BLOCK_SIZE*MFB_ITEM_WIDTH -1 downto 0);
+            DMA_RX_MFB_SOF     : out std_logic_vector(MFB_REGIONS -1 downto 0);
+            DMA_RX_MFB_EOF     : out std_logic_vector(MFB_REGIONS -1 downto 0);
+            DMA_RX_MFB_SRC_VLD : out std_logic;
+            DMA_RX_MFB_DST_RDY : in  std_logic);
+    end component;
+
     -- =============================================================================================
     -- MI synchronizer
     -- =============================================================================================
@@ -282,7 +305,7 @@ begin
 
     tx_mfb_dst_rdy_mcore <= '1';
 
-    manycore_wrapper_opt_i : entity work.RISCV_manycore_wrapper_opt
+    manycore_wrapper_opt_i : RISCV_manycore_wrapper
         generic map(
             MI_WIDTH         => 32,
             MFB_REGIONS      => DMA_MFB_REGIONS,        -- Number of regions in word

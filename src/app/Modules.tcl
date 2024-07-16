@@ -10,7 +10,6 @@ set MFB_PIPE_BASE    "$OFM_PATH/comp/mfb_tools/flow/pipe"
 set HBM_TESTER_BASE  "$OFM_PATH/comp/mem_tools/debug/hbm_tester"
 set MFB_ASFIFOX_BASE "$OFM_PATH/comp/mfb_tools/storage/asfifox"
 set MI_ASYNC_BASE    "$OFM_PATH/comp/mi_tools/async"
-set MANYCORE_BASE    "$ENTITY_BASE/BarrelRISCV/runs"
 
 # Packages
 lappend PACKAGES "$OFM_PATH/comp/base/pkg/math_pack.vhd"
@@ -31,7 +30,6 @@ if {$ARCHGRP == "TEST"} {
 
     lappend COMPONENTS [list "MFB_ASFIFOX"     $MFB_ASFIFOX_BASE "FULL" ]
     lappend COMPONENTS [list "MI_ASYNC"        $MI_ASYNC_BASE    "FULL" ]
-    lappend COMPONENTS [list "MANYCORE_SYSTEM" $MANYCORE_BASE    "FULL" ]
 
     lappend MOD "$ENTITY_BASE/barrel_proc_debug_core.vhd"
     lappend MOD "$ENTITY_BASE/application_core_full_arch.vhd"
