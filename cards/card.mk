@@ -38,4 +38,6 @@ NETCOPE_ENV = \
     DMA_TYPE=$(DMA_TYPE) \
 	$(USER_ENV)
 
+filelist : ttarget_filelist
+
 include $(OFM_PATH)/build/Makefile.Vivado.inc

@@ -43,3 +43,5 @@ source $CORE_PARAM_CHECK
 
 # Source main build files
 source $COMBO_BASE/config/Vivado.inc.tcl
+
+source $COMBO_BASE/config/custom_func.tcl
