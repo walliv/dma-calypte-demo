@@ -1,11 +1,13 @@
+# custom_func.tcl: Platform specific procedures required at some stages of a build
+# Copyright 2024 Universitaet Heidelberg, Institut fuer Technische Informatik (ZITI)
+# Author(s): Vladislav Valek <vladislav.valek@stud.uni-heidelberg.de>
+#
+# SPDX-License-Identifier: Apache-2.0
 
+# This procedure creates a TCL script that list all the source files in the design and
+# puts a Vivado commands to add them during build. This list is writen to an output file.
 proc target_filelist { {filename "filelist.tcl"} } {
-    puts "Hi, this is target_filelist!"
-
     global SYNTH_FLAGS HIERARCHY
-
-    parray SYNTH_FLAGS
-    parray HIERARCHY
 
     set NB_FILELIST [AddInputFiles SYNTH_FLAGS HIERARCHY EvalFileDevTree_paths ""]
 

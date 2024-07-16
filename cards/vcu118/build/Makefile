@@ -11,17 +11,20 @@ OUTPUT_NAME=vcu118-dma-demo
 # ------------------------------------------------------------------------------
 # PCIe parameters (not all combinations work):
 # ------------------------------------------------------------------------------
-# Supported combinations for this card:
-# TODO: 1x PCIe Gen3 x16 -- PCIE_ENDPOINT_MODE=0 (Normal latency)
-# TODO: 1x PCIe Gen3 x8  -- PCIE_ENDPOINT_MODE=2 (Low-latency)
-# 1x PCIe Gen3 x8  -- PCIE_ENDPOINT_MODE=3 (Normal latency)
-#
+
 # PCIe Generation:
 # 3 = PCIe Gen3
 PCIE_GEN=3
+
 # PCIe endpoints:
 # 1 = 1x PCIe x8/x16 in one slot
 PCIE_ENDPOINTS=1
+
+# PCIe Endpoint configuration
+# TODO: 0 = 1x PCIe Gen3 x16 (Normal latency)
+# 2 = 1x PCIe Gen3 x8 (Low-latency)
+# TODO: 3 = 1x PCIe Gen3 x8  (Normal latency)
+PCIE_ENDPOINT_MODE=2
 # ------------------------------------------------------------------------------
 
 DMA_TYPE=4
@@ -35,7 +38,6 @@ all: 50g1ll
 # 100g1: OUTPUT_NAME := vcu118-dma-demo-100g1
 # 100g1: build
 
-50g1ll: PCIE_ENDPOINT_MODE=2
 50g1ll: OUTPUT_NAME:=vcu118-dma-demo-50g1ll
 50g1ll: build
 
