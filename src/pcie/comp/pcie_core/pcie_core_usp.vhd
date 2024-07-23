@@ -285,15 +285,6 @@ architecture USP of PCIE_CORE is
         cfg_interrupt_msi_sent                 :  out  std_logic;
         cfg_interrupt_msi_fail                 :  out  std_logic;
         cfg_interrupt_msi_function_number      :  in   std_logic_vector(7    downto  0);
-        cfg_interrupt_msix_enable              :  out  std_logic_vector(3    downto  0);
-        cfg_interrupt_msix_mask                :  out  std_logic_vector(3    downto  0);
-        cfg_interrupt_msix_vf_enable           :  out  std_logic_vector(251  downto  0);
-        cfg_interrupt_msix_vf_mask             :  out  std_logic_vector(251  downto  0);
-        cfg_interrupt_msix_data                :  in   std_logic_vector(31   downto  0);
-        cfg_interrupt_msix_address             :  in   std_logic_vector(63   downto  0);
-        cfg_interrupt_msix_int                 :  in   std_logic;
-        cfg_interrupt_msix_vec_pending         :  in   std_logic_vector(1    downto  0);
-        cfg_interrupt_msix_vec_pending_status  :  out  std_logic_vector(0    downto  0);
         cfg_pm_aspm_l1_entry_reject            :  in   std_logic;
         cfg_pm_aspm_tx_l0s_entry_disable       :  in   std_logic;
         cfg_hot_reset_out                      :  out  std_logic;
@@ -433,15 +424,6 @@ architecture USP of PCIE_CORE is
         cfg_interrupt_msi_sent                 :  out  std_logic;
         cfg_interrupt_msi_fail                 :  out  std_logic;
         cfg_interrupt_msi_function_number      :  in   std_logic_vector(7    downto  0);
-        cfg_interrupt_msix_enable              :  out  std_logic_vector(3    downto  0);
-        cfg_interrupt_msix_mask                :  out  std_logic_vector(3    downto  0);
-        cfg_interrupt_msix_vf_enable           :  out  std_logic_vector(251  downto  0);
-        cfg_interrupt_msix_vf_mask             :  out  std_logic_vector(251  downto  0);
-        cfg_interrupt_msix_data                :  in   std_logic_vector(31   downto  0);
-        cfg_interrupt_msix_address             :  in   std_logic_vector(63   downto  0);
-        cfg_interrupt_msix_int                 :  in   std_logic;
-        cfg_interrupt_msix_vec_pending         :  in   std_logic_vector(1    downto  0);
-        cfg_interrupt_msix_vec_pending_status  :  out  std_logic_vector(0    downto  0);
         cfg_pm_aspm_l1_entry_reject            :  in   std_logic;
         cfg_pm_aspm_tx_l0s_entry_disable       :  in   std_logic;
         cfg_hot_reset_out                      :  out  std_logic;
@@ -810,15 +792,6 @@ begin
                 cfg_interrupt_msi_sent            => open,
                 cfg_interrupt_msi_fail            => open,
                 cfg_interrupt_msi_function_number => (others => '0'),
-                cfg_interrupt_msix_enable         => open,
-                cfg_interrupt_msix_mask           => open,
-                cfg_interrupt_msix_vf_enable      => open,
-                cfg_interrupt_msix_vf_mask        => open,
-                cfg_interrupt_msix_data           => (others => '0'),
-                cfg_interrupt_msix_address        => (others => '0'),
-                cfg_interrupt_msix_int            => '0',
-                cfg_interrupt_msix_vec_pending    => (others => '0'),
-                cfg_interrupt_msix_vec_pending_status => open,
                 cfg_pm_aspm_l1_entry_reject       => '0',
                 cfg_pm_aspm_tx_l0s_entry_disable  => '0',
                 cfg_hot_reset_out                 => open,
@@ -957,15 +930,6 @@ begin
                 cfg_interrupt_msi_sent            => open,
                 cfg_interrupt_msi_fail            => open,
                 cfg_interrupt_msi_function_number => (others => '0'),
-                cfg_interrupt_msix_enable         => open,
-                cfg_interrupt_msix_mask           => open,
-                cfg_interrupt_msix_vf_enable      => open,
-                cfg_interrupt_msix_vf_mask        => open,
-                cfg_interrupt_msix_data           => (others => '0'),
-                cfg_interrupt_msix_address        => (others => '0'),
-                cfg_interrupt_msix_int            => '0',
-                cfg_interrupt_msix_vec_pending    => (others => '0'),
-                cfg_interrupt_msix_vec_pending_status => open,
                 cfg_pm_aspm_l1_entry_reject       => '0',
                 cfg_pm_aspm_tx_l0s_entry_disable  => '0',
                 cfg_hot_reset_out                 => open,

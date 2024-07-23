@@ -59,6 +59,8 @@ set SYNTH_FLAGS(RETIMING) true
 # ------------------------------------------------------------------------------
 # Propagating card constants to the Modules.tcl files of the underlying components.
 set CARD_ARCHGRP(CORE_BASE)          $CORE_BASE
+set CARD_ARCHGRP(IP_BUILD_DIR)       $CARD_BASE/src
+set CARD_ARCHGRP(IP_GEN_FILES)       false
 set CARD_ARCHGRP(PCIE_ENDPOINT_MODE) $PCIE_ENDPOINT_MODE
 
 # make lists from associative arrays
