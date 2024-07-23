@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# This procedure creates a TCL script that list all the source files in the design and
+# This procedure creates a TCL script that lists all the source files in the design and
 # puts a Vivado commands to add them during build. This list is writen to an output file.
 proc target_filelist { {filename "filelist.tcl"} } {
     global SYNTH_FLAGS HIERARCHY
@@ -55,6 +55,8 @@ proc target_filelist { {filename "filelist.tcl"} } {
         } elseif {$opt(TYPE) == "VIVADO_IP_XACT"} { # A file is an IP defined by the XCI file
             append content "read_ip $fname\n"
             append content "generate_target all \[get_files $fname\]\n"
+        } elseif {$opt(TYPE) == "VIVADO_TCL"} { # A file is an IP defined by the TCL script
+            append content "source_with_vars $fname $opt(VARS)\n"
         } elseif {$opt(TYPE) == "VIVADO_BD"} { # A file is a Block Diagram
             append content "read_bd $fname\n"
             append content "generate_target all \[get_files $fname\] -force\n"
