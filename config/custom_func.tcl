@@ -74,3 +74,26 @@ proc target_filelist { {filename "filelist.tcl"} } {
     file delete "DevTree_paths.txt"
     nb_file_update $filename $content
 }
+
+# This method iterates throug IP generation scripts included in the current platform.
+# 1. ip_comps_arr - is a list containing the base_names of the script files and the cathegory of files
+#                   which it belongs to
+# 2. ip_modify_base - is a path to the script for IP generation
+# 3. archgrp - is the list of parameters passed down the hierarchy for the modules
+proc process_ip_scripts {ip_comps_arr ip_modify_base archgrp} {
+    upvar 1 MOD local_mods
+
+    foreach ip_comp $ip_comps_arr {
+        set script [lindex $ip_comp 1]
+        set comp   [lindex $ip_comp 2]
+        set modify [lindex $ip_comp 4]
+
+        # adjust paths
+        lset archgrp [expr [lsearch $archgrp IP_BUILD_DIR]+1] $ip_modify_base
+
+        set params_l [concat $archgrp "IP_COMP_NAME" $comp "IP_EXT_BASE" $ip_modify_base]
+        if {$modify == 1} {
+            lappend local_mods [list "$ip_modify_base/$script.ip.tcl" TYPE "VIVADO_TCL" PHASE { "ADD_FILES" "IP_MODIFY" } VARS [list IP_PARAMS_L $params_l]]
+        }
+    }
+}
