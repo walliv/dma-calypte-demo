@@ -7,7 +7,7 @@
 # This procedure creates a TCL script that lists all the source files in the design and
 # puts a Vivado commands to add them during build. This list is writen to an output file.
 proc target_filelist { {filename "filelist.tcl"} } {
-    global SYNTH_FLAGS HIERARCHY
+    global SYNTH_FLAGS HIERARCHY COMBO_BASE
 
     set NB_FILELIST [AddInputFiles SYNTH_FLAGS HIERARCHY EvalFileDevTree_paths ""]
 
@@ -15,9 +15,16 @@ proc target_filelist { {filename "filelist.tcl"} } {
         eval target_generate_file [SimplPath [lindex $gen_file 0]]
     }
 
+    # Convert COMBO_BASE to absolute path
+    set int_combo_base [file normalize $COMBO_BASE]
+
     set library "work"
     set content "# This is an automatically generated file.\n"
     append content "# You can regenerate it using \"make filelist\".\n\n"
+
+    append content "if \{\[info exists \$shell_git_root]\} {
+    error \"The shell_git_root variable is undefined! Initialize it in a calling shell.\"
+}\n\n"
 
     foreach item $NB_FILELIST {
 
@@ -27,6 +34,12 @@ proc target_filelist { {filename "filelist.tcl"} } {
         if {! ($opt(TYPE) == "COMPONENT" || $opt(TYPE) == "DEVTREE")} {
             puts "Adding: $fname"
             parray opt
+
+            # Choosing only the part that address the file inside a repository and not in
+            # the whole system. The absolute path to the GIT repo is subtracted from
+            # the name of the file.
+            set fname [string range $fname [string length $int_combo_base] end]
+            set fname "\$\{shell_git_root\}${fname}"
         }
 
         if {$opt(TYPE) == ""} { # A file is a normal HDL source file
@@ -56,7 +69,8 @@ proc target_filelist { {filename "filelist.tcl"} } {
             append content "read_ip $fname\n"
             append content "generate_target all \[get_files $fname\]\n"
         } elseif {$opt(TYPE) == "VIVADO_TCL"} { # A file is an IP defined by the TCL script
-            append content "source_with_vars $fname $opt(VARS)\n"
+            append content "set $opt(VARS)\n"
+            append content "source $fname\n"
         } elseif {$opt(TYPE) == "VIVADO_BD"} { # A file is a Block Diagram
             append content "read_bd $fname\n"
             append content "generate_target all \[get_files $fname\] -force\n"
@@ -72,6 +86,9 @@ proc target_filelist { {filename "filelist.tcl"} } {
 
         unset opt
     }
+
+    append content "generate_target all \[get_ips\]\n"
+    append content "synth_ip \[get_ips\]\n"
 
     file delete "DevTree_paths.txt"
     nb_file_update $filename $content
