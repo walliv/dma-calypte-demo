@@ -82,14 +82,13 @@ build the card's design effortlessly without the need to regenare IP files.
 
 ### Cloning the repositories
 
-This repository contains two source submodules that need to be cloned in order
+This repository contains one submodule that need to be cloned in order
 to have a complete stack:
 
 ```bash
 git clone git@github.com:walliv/dma-calypte-demo.git 
 cd dma-calypte-demo 
 git submodule update --init src/ofm
-git submodule update --init src/app/BarrelRISCV
 ```
 
 The [OFM (Open FPGA Modules)](https://github.com/walliv/ofm/) submodule contains
