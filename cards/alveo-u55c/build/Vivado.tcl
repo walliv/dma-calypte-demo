@@ -75,8 +75,8 @@ set ARCHGRP_ALL [concat $CARD_ARCHGRP_L $CORE_ARCHGRP_L]
 # Add top level entity to the hierarchy of the components
 lappend HIERARCHY(COMPONENTS) [list "TOPLEVEL" $CARD_BASE/src $ARCHGRP_ALL]
 # Add constrains for a current card
-lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/constr/general.xdc"
-lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/constr/pcie.xdc"
+lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/src/general.xdc"
+lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/src/pcie.xdc"
 
 # ------------------------------------------------------------------------------
 # Call main function which handle targets

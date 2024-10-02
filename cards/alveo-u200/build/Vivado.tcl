@@ -69,12 +69,12 @@ set ARCHGRP_ALL [concat $CARD_ARCHGRP_L $CORE_ARCHGRP_L]
 lappend HIERARCHY(COMPONENTS) [list "TOPLEVEL" $CARD_BASE/src $ARCHGRP_ALL]
 
 # Add constrains for a current card
-lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/constr/general.xdc"
+lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/src/general.xdc"
 # Adds half of the PCIe lanes, e.g. 0-7
-lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/constr/pcie_half.xdc"
+lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/src/pcie_half.xdc"
 # Adds another half of the PCIe lanes, e.g. 8-15
 if {$PCIE_ENDPOINT_MODE == 0} {
-    lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/constr/pcie_full.xdc"
+    lappend SYNTH_FLAGS(CONSTR) "$CARD_BASE/src/pcie_full.xdc"
 }
 
 # ------------------------------------------------------------------------------
